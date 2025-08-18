@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -37,7 +38,6 @@ export default function Header() {
   useEffect(() => {
     setIsClient(true);
     // In a real app, you'd check for a token here.
-    // For now, we'll just simulate being logged out.
     setIsLoggedIn(false); 
   }, []);
 
