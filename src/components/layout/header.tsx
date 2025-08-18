@@ -32,10 +32,11 @@ import { useState, useEffect } from 'react';
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
-  // To avoid hydration mismatch, we set the initial login state on the client.
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
     setIsLoggedIn(false);
+    setIsClient(true);
   }, []);
 
   const navLinks = [
@@ -102,44 +103,46 @@ export default function Header() {
                 <Languages className="h-5 w-5" />
               </Button>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label="User Profile">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {isLoggedIn ? (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/account/profile">
-                          <User className="mr-2" /> Profile
+              {isClient && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" aria-label="User Profile">
+                      <User className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {isLoggedIn ? (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link href="/account/profile">
+                            <User className="mr-2" /> Profile
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                           <Link href="/account/my-collection">
+                            <LayoutGrid className="mr-2" /> My Collection
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                           <Link href="/account/settings">
+                            <Settings className="mr-2" /> Settings
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
+                          <LogOut className="mr-2" /> Log Out
+                        </DropdownMenuItem>
+                      </>
+                    ) : (
+                      <DropdownMenuItem onClick={() => setIsLoggedIn(true)} asChild>
+                        <Link href="/login">
+                          <LogIn className="mr-2" /> Log In
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                         <Link href="/account/my-collection">
-                          <LayoutGrid className="mr-2" /> My Collection
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                         <Link href="/account/settings">
-                          <Settings className="mr-2" /> Settings
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
-                        <LogOut className="mr-2" /> Log Out
-                      </DropdownMenuItem>
-                    </>
-                  ) : (
-                    <DropdownMenuItem onClick={() => setIsLoggedIn(true)} asChild>
-                      <Link href="/login">
-                        <LogIn className="mr-2" /> Log In
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
         </div>
