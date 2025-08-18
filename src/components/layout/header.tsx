@@ -54,6 +54,46 @@ export default function Header() {
     { name: 'AI Art Editor', href: '/create/ai-art-editor', icon: <Bot /> },
     { name: 'AI Music Generator', href: '/create/music-generator', icon: <Music /> },
   ];
+  
+  const renderUserMenu = () => {
+    if (!isClient) {
+      return null;
+    }
+
+    if (isLoggedIn) {
+      return (
+        <>
+          <DropdownMenuItem asChild>
+            <Link href="/account/profile">
+              <User className="mr-2" /> Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+              <Link href="/account/my-collection">
+              <LayoutGrid className="mr-2" /> My Collection
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+              <Link href="/account/settings">
+              <Settings className="mr-2" /> Settings
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
+            <LogOut className="mr-2" /> Log Out
+          </DropdownMenuItem>
+        </>
+      );
+    } else {
+      return (
+        <DropdownMenuItem asChild>
+           <Link href="/login">
+            <LogIn className="mr-2" /> Log In
+           </Link>
+        </DropdownMenuItem>
+      );
+    }
+  };
 
   return (
     <>
@@ -112,35 +152,7 @@ export default function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {isClient && isLoggedIn ? (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/account/profile">
-                          <User className="mr-2" /> Profile
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                          <Link href="/account/my-collection">
-                          <LayoutGrid className="mr-2" /> My Collection
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                          <Link href="/account/settings">
-                          <Settings className="mr-2" /> Settings
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
-                        <LogOut className="mr-2" /> Log Out
-                      </DropdownMenuItem>
-                    </>
-                  ) : (
-                    <DropdownMenuItem asChild>
-                       <Link href="/login">
-                        <LogIn className="mr-2" /> Log In
-                       </Link>
-                    </DropdownMenuItem>
-                  )}
+                  {renderUserMenu()}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
