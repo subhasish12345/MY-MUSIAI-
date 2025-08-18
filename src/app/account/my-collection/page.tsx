@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MyCollectionPage() {
   return (
@@ -14,14 +15,14 @@ export default function MyCollectionPage() {
         {[...Array(6)].map((_, i) => (
           <Card key={i}>
             <CardContent className="p-0">
-              <div className="aspect-square bg-muted rounded-t-lg"></div>
+              <Skeleton className="aspect-square w-full rounded-t-lg" />
             </CardContent>
             <CardHeader>
-                <CardTitle>Artwork {i + 1}</CardTitle>
-                <CardDescription>A stunning piece of AI art.</CardDescription>
+                <CardTitle><Skeleton className="h-6 w-3/4" /></CardTitle>
+                <CardDescription><Skeleton className="h-4 w-1/2" /></CardDescription>
             </CardHeader>
              <CardContent>
-              <Button variant="secondary" className="w-full">View Details</Button>
+              <Button variant="secondary" className="w-full" disabled>View Details</Button>
             </CardContent>
           </Card>
         ))}

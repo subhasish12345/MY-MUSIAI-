@@ -31,13 +31,12 @@ import { useState, useEffect } from 'react';
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    setIsMounted(true);
     // In a real app, you would check for an auth token here
-    // For this simulation, we'll just set it to false
     setIsLoggedIn(false);
   }, []);
 
@@ -56,7 +55,7 @@ export default function Header() {
   ];
   
   const renderUserMenu = () => {
-    if (!isClient) {
+    if (!isMounted) {
       return null;
     }
 

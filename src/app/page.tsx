@@ -1,20 +1,30 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { generate3DBackground } from "@/ai/flows/interactive-landing-page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Bot, Image as ImageIcon, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function Home() {
-  let backgroundDataUri;
-  try {
-    const result = await generate3DBackground({ theme: "ethereal lavender and rose gold abstract particles" });
-    backgroundDataUri = result.backgroundDataUri;
-  } catch (error) {
-    console.error("Failed to generate 3D background, using fallback:", error);
-    backgroundDataUri = "https://placehold.co/1920x1080.png";
-  }
+export default function Home() {
+  const [backgroundDataUri, setBackgroundDataUri] = useState<string | null>(null);
 
+  useEffect(() => {
+    async function getBackground() {
+      try {
+        const result = await generate3DBackground({ theme: "ethereal lavender and rose gold abstract particles" });
+        setBackgroundDataUri(result.backgroundDataUri);
+      } catch (error) {
+        console.error("Failed to generate 3D background, using fallback:", error);
+        // Set a fallback placeholder on error
+        setBackgroundDataUri("https://placehold.co/1920x1080.png");
+      }
+    }
+    getBackground();
+  }, []);
 
   const features = [
     {
@@ -46,14 +56,18 @@ export default async function Home() {
   return (
     <div className="flex flex-col items-center">
       <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center text-center text-white overflow-hidden">
-        <Image
-          src={backgroundDataUri}
-          alt="AI Generated Background"
-          layout="fill"
-          objectFit="cover"
-          className="z-0"
-          priority
-        />
+        {backgroundDataUri ? (
+          <Image
+            src={backgroundDataUri}
+            alt="AI Generated Background"
+            layout="fill"
+            objectFit="cover"
+            className="z-0"
+            priority
+          />
+        ) : (
+          <Skeleton className="absolute inset-0 z-0" />
+        )}
         <div className="absolute inset-0 bg-black/50 z-10" />
         <div className="z-20 p-4 flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 text-shadow-lg animate-fade-in-down">

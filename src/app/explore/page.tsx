@@ -1,5 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ExplorePage() {
   return (
@@ -12,10 +13,12 @@ export default function ExplorePage() {
         {[...Array(9)].map((_, i) => (
           <Card key={i}>
             <CardContent className="p-0">
-              <div className="aspect-square bg-muted rounded-t-lg"></div>
+              <Skeleton className="aspect-square w-full rounded-t-lg" />
             </CardContent>
             <CardHeader>
-              <CardTitle>Artwork {i + 1}</CardTitle>
+              <CardTitle>
+                 <Skeleton className="h-6 w-3/4" />
+              </CardTitle>
             </CardHeader>
           </Card>>
         ))}
