@@ -35,7 +35,8 @@ export default function Header() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsLoggedIn(false);
+    // This now correctly defers state updates to the client-side
+    setIsLoggedIn(false); 
     setIsClient(true);
   }, []);
 
