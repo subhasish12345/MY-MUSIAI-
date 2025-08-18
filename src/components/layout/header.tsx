@@ -35,10 +35,10 @@ export default function Header() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This effect runs only on the client, after the initial render.
     setIsClient(true);
-    // You can also check for an actual authentication token here.
-    setIsLoggedIn(false);
+    // In a real app, you'd check for a token here.
+    // For now, we'll just simulate being logged out.
+    setIsLoggedIn(false); 
   }, []);
 
   const navLinks = [
@@ -104,7 +104,7 @@ export default function Header() {
               <Button variant="ghost" size="icon" aria-label="Language">
                 <Languages className="h-5 w-5" />
               </Button>
-
+              
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" aria-label="User Profile">
@@ -134,13 +134,13 @@ export default function Header() {
                         <LogOut className="mr-2" /> Log Out
                       </DropdownMenuItem>
                     </>
-                  ) : (
-                    <DropdownMenuItem onClick={() => setIsLoggedIn(true)} asChild>
+                  ) : isClient ? (
+                    <DropdownMenuItem asChild>
                        <Link href="/login">
                         <LogIn className="mr-2" /> Log In
                        </Link>
                     </DropdownMenuItem>
-                  )}
+                  ) : null}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
