@@ -32,13 +32,14 @@ import { useState, useEffect } from 'react';
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    // In a real app, you'd check for a token here.
-    setIsLoggedIn(false); 
+    // In a real app, you would check for an auth token here
+    // For this simulation, we'll just set it to false
+    setIsLoggedIn(false);
   }, []);
 
   const navLinks = [
@@ -112,34 +113,36 @@ export default function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {isClient && isLoggedIn ? (
-                    <>
+                  {isClient ? (
+                    isLoggedIn ? (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link href="/account/profile">
+                            <User className="mr-2" /> Profile
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/account/my-collection">
+                            <LayoutGrid className="mr-2" /> My Collection
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/account/settings">
+                            <Settings className="mr-2" /> Settings
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
+                          <LogOut className="mr-2" /> Log Out
+                        </DropdownMenuItem>
+                      </>
+                    ) : (
                       <DropdownMenuItem asChild>
-                        <Link href="/account/profile">
-                          <User className="mr-2" /> Profile
-                        </Link>
+                         <Link href="/login">
+                          <LogIn className="mr-2" /> Log In
+                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                          <Link href="/account/my-collection">
-                          <LayoutGrid className="mr-2" /> My Collection
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                          <Link href="/account/settings">
-                          <Settings className="mr-2" /> Settings
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
-                        <LogOut className="mr-2" /> Log Out
-                      </DropdownMenuItem>
-                    </>
-                  ) : isClient ? (
-                    <DropdownMenuItem asChild>
-                       <Link href="/login">
-                        <LogIn className="mr-2" /> Log In
-                       </Link>
-                    </DropdownMenuItem>
+                    )
                   ) : null}
                 </DropdownMenuContent>
               </DropdownMenu>
