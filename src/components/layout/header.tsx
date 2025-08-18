@@ -27,12 +27,17 @@ import {
 import { Button } from '@/components/ui/button';
 import { Logo } from './logo';
 import { SmartSearch } from '../smart-search';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
+  // To avoid hydration mismatch, we set the initial login state on the client.
+  useEffect(() => {
+    setIsLoggedIn(false);
+  }, []);
+
   const navLinks = [
     { name: 'Explore', href: '/explore' },
     { name: 'Marketplace', href: '/marketplace' },
