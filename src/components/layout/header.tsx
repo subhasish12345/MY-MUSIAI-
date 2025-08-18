@@ -35,9 +35,10 @@ export default function Header() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This now correctly defers state updates to the client-side
-    setIsLoggedIn(false); 
+    // This effect runs only on the client, after the initial render.
     setIsClient(true);
+    // You can also check for an actual authentication token here.
+    setIsLoggedIn(false);
   }, []);
 
   const navLinks = [
@@ -135,9 +136,9 @@ export default function Header() {
                     </>
                   ) : (
                     <DropdownMenuItem onClick={() => setIsLoggedIn(true)} asChild>
-                      <Link href="/login">
+                       <Link href="/login">
                         <LogIn className="mr-2" /> Log In
-                      </Link>
+                       </Link>
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>

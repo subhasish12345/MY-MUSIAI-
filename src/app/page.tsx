@@ -6,7 +6,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
-  const { backgroundDataUri } = await generate3DBackground({ theme: "ethereal lavender and rose gold abstract particles" });
+  let backgroundDataUri;
+  try {
+    const result = await generate3DBackground({ theme: "ethereal lavender and rose gold abstract particles" });
+    backgroundDataUri = result.backgroundDataUri;
+  } catch (error) {
+    console.error("Failed to generate 3D background, using fallback:", error);
+    backgroundDataUri = "https://placehold.co/1920x1080.png";
+  }
+
 
   const features = [
     {
