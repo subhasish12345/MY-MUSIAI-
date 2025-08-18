@@ -16,6 +16,10 @@ import {
   smartSearchAutosuggest,
   type SmartSearchAutosuggestInput,
 } from '@/ai/flows/smart-search-autosuggest';
+import {
+  generateMusic,
+  type GenerateMusicInput,
+} from '@/ai/flows/music-generator';
 
 export async function handleGenerateArt(input: GenerateArtInput) {
   try {
@@ -55,4 +59,14 @@ export async function handleSmartSearch(input: SmartSearchAutosuggestInput) {
     console.error(error);
     return { error: 'Failed to get search suggestions. Please try again.' };
   }
+}
+
+export async function handleGenerateMusic(input: GenerateMusicInput) {
+    try {
+        const result = await generateMusic(input);
+        return result;
+    } catch (error) {
+        console.error(error);
+        return { error: 'Failed to generate music. Please try again.' };
+    }
 }

@@ -6,3 +6,4 @@ import '@/ai/flows/smart-search-autosuggest.ts';
 import '@/ai/flows/interactive-landing-page.ts';
 import '@/ai/flows/image-to-art-transformer.ts';
 import '@/ai/flows/ai-art-editor.ts';
+import '@/ai/flows/music-generator.ts';

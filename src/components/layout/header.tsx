@@ -10,6 +10,7 @@ import {
   User,
   Image as ImageIcon,
   Bot,
+  Music,
 } from 'lucide-react';
 
 import {
@@ -28,16 +29,17 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const navLinks = [
-    { name: 'Explore', href: '#' },
-    { name: 'Marketplace', href: '#' },
-    { name: 'Learn', href: '#' },
-    { name: 'Community', href: '#' },
+    { name: 'Explore', href: '/explore' },
+    { name: 'Marketplace', href: '/marketplace' },
+    { name: 'Learn', href: '/learn' },
+    { name: 'Community', href: '/community' },
   ];
 
   const createLinks = [
     { name: 'Text-to-Art Generator', href: '/create/text-to-art', icon: <Palette /> },
     { name: 'Image-to-Art Transformer', href: '/create/image-to-art', icon: <ImageIcon /> },
     { name: 'AI Art Editor', href: '/create/ai-art-editor', icon: <Bot /> },
+    { name: 'AI Music Generator', href: '/create/music-generator', icon: <Music /> },
   ];
 
   return (
