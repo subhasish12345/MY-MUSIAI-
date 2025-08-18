@@ -11,6 +11,10 @@ import {
   Image as ImageIcon,
   Bot,
   Music,
+  LayoutGrid,
+  Settings,
+  LogOut,
+  LogIn
 } from 'lucide-react';
 
 import {
@@ -18,15 +22,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Logo } from './logo';
 import { SmartSearch } from '../smart-search';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const navLinks = [
     { name: 'Explore', href: '/explore' },
@@ -99,10 +104,35 @@ export default function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>My Collection</DropdownMenuItem>
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuItem>Log Out</DropdownMenuItem>
+                  {isLoggedIn ? (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/account/profile">
+                          <User className="mr-2" /> Profile
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                         <Link href="/account/my-collection">
+                          <LayoutGrid className="mr-2" /> My Collection
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                         <Link href="/account/settings">
+                          <Settings className="mr-2" /> Settings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
+                        <LogOut className="mr-2" /> Log Out
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <DropdownMenuItem onClick={() => setIsLoggedIn(true)} asChild>
+                      <Link href="/login">
+                        <LogIn className="mr-2" /> Log In
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
