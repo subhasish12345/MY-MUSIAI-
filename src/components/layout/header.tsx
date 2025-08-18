@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -106,15 +105,15 @@ export default function Header() {
                 <Languages className="h-5 w-5" />
               </Button>
               
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label="User Profile">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {isClient ? (
-                    isLoggedIn ? (
+              {isClient && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" aria-label="User Profile">
+                      <User className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {isLoggedIn ? (
                       <>
                         <DropdownMenuItem asChild>
                           <Link href="/account/profile">
@@ -142,10 +141,10 @@ export default function Header() {
                           <LogIn className="mr-2" /> Log In
                          </Link>
                       </DropdownMenuItem>
-                    )
-                  ) : null}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
         </div>
