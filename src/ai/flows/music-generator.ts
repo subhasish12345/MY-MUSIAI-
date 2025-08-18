@@ -66,7 +66,7 @@ const generateMusicFlow = ai.defineFlow(
       fullPrompt = `${fullPrompt}, in a ${input.mood} mood.`;
     }
 
-    const { media } = await ai.generate({
+    const {stream, response} = ai.generateStream({
       model: 'googleai/gemini-2.5-flash-preview-tts',
       prompt: fullPrompt,
       config: {
@@ -79,17 +79,25 @@ const generateMusicFlow = ai.defineFlow(
       }
     });
 
-    if (!media?.url) {
-      throw new Error('No audio was generated.');
+    let audioDataUri = '';
+    for await (const chunk of stream) {
+        if(chunk.media) {
+            const audioBuffer = Buffer.from(
+                chunk.media.url.substring(chunk.media.url.indexOf(',') + 1),
+                'base64'
+            );
+            const wavBase64 = await toWav(audioBuffer);
+            audioDataUri = `data:audio/wav;base64,${wavBase64}`;
+            break; 
+        }
     }
     
-    const audioBuffer = Buffer.from(
-      media.url.substring(media.url.indexOf(',') + 1),
-      'base64'
-    );
-    
-    const wavBase64 = await toWav(audioBuffer);
+    await response;
 
-    return { audioDataUri: `data:audio/wav;base64,${wavBase64}` };
+    if (!audioDataUri) {
+      throw new Error('No audio was generated.');
+    }
+
+    return { audioDataUri };
   }
 );

@@ -42,24 +42,31 @@ export type ImageToArtTransformerOutput = z.infer<
 export async function imageToArtTransformer(
   input: ImageToArtTransformerInput
 ): Promise<ImageToArtTransformerOutput> {
-  return imageToArtTransformerFlow(input);
+  const {stream, response} = ai.generateStream({
+    prompt: [
+      {media: {url: input.photoDataUri}},
+      {
+        text: `Transform this image to look like it was created in the style of ${input.style}`,
+      },
+    ],
+    model: 'googleai/gemini-2.0-flash-preview-image-generation',
+    config: {
+      responseModalities: ['TEXT', 'IMAGE'],
+    },
+  });
+
+  let transformedPhotoDataUri = '';
+  for await (const chunk of stream) {
+    if (chunk.media) {
+      transformedPhotoDataUri = chunk.media.url;
+      // Break early since we only need the image
+      break;
+    }
+  }
+
+  await response;
+  return {transformedPhotoDataUri};
 }
-
-const prompt = ai.definePrompt({
-  name: 'imageToArtTransformerPrompt',
-  input: {schema: ImageToArtTransformerInputSchema},
-  output: {schema: ImageToArtTransformerOutputSchema},
-  prompt: `You are an AI artist that can transform images into new artworks using style transfer.
-
-  The user will provide an image and a desired style. You should use the style to transform the image into a new artwork.
-  The user can also specify a style mix ratio to control the strength of the style transfer.
-
-  Original Image: {{media url=photoDataUri}}
-  Style: {{{style}}}
-  Style Mix Ratio: {{{styleMixRatio}}}
-
-  Return the transformed image as a base64 encoded data URI.`, // Removed the explicit format instruction.
-});
 
 const imageToArtTransformerFlow = ai.defineFlow(
   {
@@ -67,22 +74,5 @@ const imageToArtTransformerFlow = ai.defineFlow(
     inputSchema: ImageToArtTransformerInputSchema,
     outputSchema: ImageToArtTransformerOutputSchema,
   },
-  async input => {
-    const {
-      output: {transformedPhotoDataUri},
-    } = await ai.generate({
-      prompt: [
-        {media: {url: input.photoDataUri}},
-        {
-          text: `Transform this image to look like it was created in the style of ${input.style}`,
-        },
-      ],
-      model: 'googleai/gemini-2.0-flash-preview-image-generation',
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'],
-      },
-    });
-
-    return {transformedPhotoDataUri: transformedPhotoDataUri!};
-  }
+  imageToArtTransformer
 );

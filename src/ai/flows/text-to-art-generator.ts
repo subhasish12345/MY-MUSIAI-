@@ -21,24 +21,35 @@ const GenerateArtOutputSchema = z.object({
 });
 export type GenerateArtOutput = z.infer<typeof GenerateArtOutputSchema>;
 
-export async function generateArt(input: GenerateArtInput): Promise<GenerateArtOutput> {
-  return generateArtFlow(input);
+export async function generateArt(
+  input: GenerateArtInput
+): Promise<GenerateArtOutput> {
+  const {stream, response} = ai.generateStream({
+    model: 'googleai/gemini-2.0-flash-preview-image-generation',
+    prompt: input.style
+      ? `${input.prompt} in the style of ${input.style}`
+      : input.prompt,
+    config: {
+      responseModalities: ['TEXT', 'IMAGE'],
+    },
+  });
+
+  let artDataUri = '';
+  for await (const chunk of stream) {
+    if (chunk.media) {
+      artDataUri = chunk.media.url;
+      // We only need the image, so we can break early
+      break;
+    }
+  }
+
+  await response;
+  if (!artDataUri) {
+    throw new Error('No image was generated.');
+  }
+
+  return {artDataUri};
 }
-
-const prompt = ai.definePrompt({
-  name: 'generateArtPrompt',
-  input: {schema: GenerateArtInputSchema},
-  output: {schema: GenerateArtOutputSchema},
-  prompt: `Generate an image based on the following prompt with the specified style.
-
-Prompt: {{{prompt}}}
-Style: {{{style}}}
-
-Ensure the generated image is returned as a data URI.
-
-{{#if style}}
-Please generate the image in the style of {{{style}}}.{{/if}}`,
-});
 
 const generateArtFlow = ai.defineFlow(
   {
@@ -46,19 +57,5 @@ const generateArtFlow = ai.defineFlow(
     inputSchema: GenerateArtInputSchema,
     outputSchema: GenerateArtOutputSchema,
   },
-  async input => {
-    const {media} = await ai.generate({
-      model: 'googleai/gemini-2.0-flash-preview-image-generation',
-      prompt: input.style ? `${input.prompt} in the style of ${input.style}` : input.prompt,
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'],
-      },
-    });
-
-    if (!media?.url) {
-      throw new Error('No image was generated.');
-    }
-
-    return {artDataUri: media.url};
-  }
+  generateArt
 );

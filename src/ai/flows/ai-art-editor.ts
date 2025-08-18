@@ -34,7 +34,7 @@ export type AIArtEditorInput = z.infer<typeof AIArtEditorInputSchema>;
 const AIArtEditorOutputSchema = z.object({
   editedImageUri: z
     .string()
-    .describe("The edited image, as a data URI in base64 format."),
+    .describe('The edited image, as a data URI in base64 format.'),
   editSummary: z
     .string()
     .describe('A summary of the edits that were performed.'),
@@ -42,51 +42,42 @@ const AIArtEditorOutputSchema = z.object({
 
 export type AIArtEditorOutput = z.infer<typeof AIArtEditorOutputSchema>;
 
-export async function aiArtEditor(input: AIArtEditorInput): Promise<AIArtEditorOutput> {
-  return aiArtEditorFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'aiArtEditorPrompt',
-  input: {schema: AIArtEditorInputSchema},
-  output: {schema: AIArtEditorOutputSchema},
-  prompt: `You are a professional AI-powered art editor. You will receive an image and instructions on how to edit it.
-
-  Instructions: {{{editInstructions}}}
-  {{#if paletteAdjustment}}
-  Palette Adjustment: {{{paletteAdjustment}}}
-  {{/if}}
-  {{#if enhancementLevel}}
-  Enhancement Level: {{{enhancementLevel}}}
-  {{/if}}
-
-  Apply the instructions to the image provided.
-  
-  Image: {{media url=imageUri}}
-
-  Return the edited image as a data URI and provide a summary of the edits performed.
-  Ensure the 'editedImageUri' is a data URI with proper MIME type and base64 encoding.
-  `,config: {
-    safetySettings: [
+export async function aiArtEditor(
+  input: AIArtEditorInput
+): Promise<AIArtEditorOutput> {
+  const {stream, response} = ai.generateStream({
+    prompt: [
+      {media: {url: input.imageUri}},
       {
-        category: 'HARM_CATEGORY_HATE_SPEECH',
-        threshold: 'BLOCK_ONLY_HIGH',
-      },
-      {
-        category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-        threshold: 'BLOCK_NONE',
-      },
-      {
-        category: 'HARM_CATEGORY_HARASSMENT',
-        threshold: 'BLOCK_MEDIUM_AND_ABOVE',
-      },
-      {
-        category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-        threshold: 'BLOCK_LOW_AND_ABOVE',
+        text: `Edit the image with the following instructions: ${
+          input.editInstructions
+        }. Palette Adjustment: ${
+          input.paletteAdjustment || 'none'
+        }, Enhancement Level: ${input.enhancementLevel || 'none'}. 
+        Summarize the edits you made.`,
       },
     ],
-  },
-});
+    model: 'googleai/gemini-2.0-flash-preview-image-generation',
+    config: {
+      responseModalities: ['TEXT', 'IMAGE'],
+    },
+  });
+
+  let editedImageUri = '';
+  let editSummary = '';
+
+  for await (const chunk of stream) {
+    if (chunk.media) {
+      editedImageUri = chunk.media.url;
+    }
+    if (chunk.text) {
+      editSummary += chunk.text;
+    }
+  }
+
+  await response;
+  return {editedImageUri, editSummary};
+}
 
 const aiArtEditorFlow = ai.defineFlow(
   {
@@ -94,8 +85,5 @@ const aiArtEditorFlow = ai.defineFlow(
     inputSchema: AIArtEditorInputSchema,
     outputSchema: AIArtEditorOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
+  aiArtEditor
 );
