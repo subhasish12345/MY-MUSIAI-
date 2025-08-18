@@ -11,7 +11,7 @@ export default function Footer() {
                 </div>
                 <div className="text-center md:text-right">
                     <p>
-                        Developed by you. Powered by AI.
+                        Developed by SUBHASISH member of NANITES.
                     </p>
                     <p>
                         <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link> | <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
