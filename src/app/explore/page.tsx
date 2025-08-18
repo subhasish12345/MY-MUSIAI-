@@ -20,7 +20,7 @@ export default function ExplorePage() {
                  <Skeleton className="h-6 w-3/4" />
               </CardTitle>
             </CardHeader>
-          </Card>>
+          </Card>
         ))}
       </div>
     </div>
